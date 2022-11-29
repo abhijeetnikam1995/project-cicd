@@ -49,9 +49,9 @@
                         </div>
                         <div class="navbar-collapse collapse">
                             <ul class="nav navbar-nav">
-                                <li><a href="#">TECHNOLOGIES</a></li>
-                                <li><a href="#">ABOUT</a></li>
-                                <li><a href="#">BLOG</a></li>
+                                <li><a href="#">Abhijeet test</a></li>
+                                <li><a href="#">Abhijeet test</a></li>
+                                <li><a href="#">Abhijeet test</a></li>
                             </ul>
                             <div class="navbar-collapse navbar-right collapse">
 	                            <ul class="nav navbar-nav">
