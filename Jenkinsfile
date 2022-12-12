@@ -30,7 +30,7 @@ pipeline {
                 sh 'mvn test'
             }
         }
-*/
+
         stage('INTEGRATION TEST'){
             steps {
                 sh 'mvn verify -DskipUnitTests'
@@ -48,7 +48,7 @@ pipeline {
             }
         }
 
-
+*/
         stage('Building image') {
             steps{
               script {
