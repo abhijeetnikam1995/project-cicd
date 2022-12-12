@@ -73,7 +73,7 @@ pipeline {
             sh "docker rmi $registry:$BUILD_NUMBER"
           }
         }
-
+/*
         stage('CODE ANALYSIS with SONARQUBE') {
 
             environment {
@@ -97,6 +97,8 @@ pipeline {
                 }
             }
         }
+	
+	*/
         stage('Kubernetes Deploy') {
 	  agent { label 'KOPS' }
             steps {
