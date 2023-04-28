@@ -93,5 +93,30 @@ pipeline {
                 )
             }
         }
+	    
+	    
+	           stage('Build App Image') {
+            steps {
+                script {
+			sh 'pwd'
+                    dockerImage = docker.build( appRegistry + ":$BUILD_NUMBER", "./vprofile-docker/Docker-files/app/multistage/")
+                }
+            }
+        }
+        
+        stage('Upload App Image') {
+          steps{
+            script {
+              docker.withRegistry( vprofileRegistry, registryCredential ) {
+                dockerImage.push("$BUILD_NUMBER")
+                dockerImage.push('latest')
+              }
+            }
+          }
+        }
+	    
+	    
+	    
+	    
     }
 }
