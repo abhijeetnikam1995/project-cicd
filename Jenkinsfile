@@ -17,7 +17,7 @@ pipeline {
         NEXUS_LOGIN = 'nexuslogin'
         SONARSERVER = 'sonarserver'
         SONARSCANNER = 'sonarscanner'
-	     registry = "imranvisualpath/vproappdock"
+	     registry = "abhijeetnikam1995/vproappdock"
         registryCredential = 'dockerhub'
     }
 
