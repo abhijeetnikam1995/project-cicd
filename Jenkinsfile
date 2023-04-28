@@ -44,7 +44,7 @@ pipeline {
                 sh 'mvn -s settings.xml checkstyle:checkstyle'
             }
         }
-/*
+
         stage('Sonar Analysis') {
             environment {
                 scannerHome = tool "${SONARSCANNER}"
@@ -62,7 +62,7 @@ pipeline {
               }
             }
         }
-	*/    
+	  
 	    
 	     stage("Quality Gate") {
             steps {
