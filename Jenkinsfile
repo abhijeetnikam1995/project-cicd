@@ -97,14 +97,30 @@ pipeline {
         }
 	    
 	    
+	    
+	    
+	             
 	              stage('Building image') {
+       =
             steps{
-              script {
-             
-		      dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                script {
+          
+			sh 'pwd'
+              
+                    dockerImage = docker.build( registry + ":$BUILD_NUMBER", "./vprofile-docker/Docker-files/app/multistage/")
               }
+                }
             }
-        }
+         	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	    
+	
         
         stage('Deploy Image') {
           steps{
