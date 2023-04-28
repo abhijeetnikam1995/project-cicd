@@ -17,6 +17,8 @@ pipeline {
         NEXUS_LOGIN = 'nexuslogin'
         SONARSERVER = 'sonarserver'
         SONARSCANNER = 'sonarscanner'
+	     registry = "imranvisualpath/vproappdock"
+        registryCredential = 'dockerhub'
     }
 
     stages {
@@ -95,25 +97,25 @@ pipeline {
         }
 	    
 	    
-	           stage('Build App Image') {
-            steps {
-                script {
-			sh 'pwd'
-                    dockerImage = docker.build( appRegistry + ":$BUILD_NUMBER", "./vprofile-docker/Docker-files/app/multistage/")
-                }
+	              stage('Building image') {
+            steps{
+              script {
+                dockerImage = docker.build registry + ":$BUILD_NUMBER"
+              }
             }
         }
         
-        stage('Upload App Image') {
+        stage('Deploy Image') {
           steps{
             script {
-              docker.withRegistry( vprofileRegistry, registryCredential ) {
+              docker.withRegistry( '', registryCredential ) {
                 dockerImage.push("$BUILD_NUMBER")
                 dockerImage.push('latest')
               }
             }
           }
         }
+    
 	    
 	    
 	    
