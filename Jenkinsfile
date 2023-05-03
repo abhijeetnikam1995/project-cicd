@@ -19,8 +19,8 @@ pipeline {
         SONARSCANNER = 'sonarscanner'
 	     registry = "abhijeetnikam1995/vproappdock"
         registryCredential = 'dockerhub'
-	    	    AWS_ACCESS_KEY_ID='AKIA5YGNIRCYUDV6UHBT'
-		    AWS_SECRET_ACCESS_KEY='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'
+	    	    AWS_ACCESS_KEY_ID=''
+		    AWS_SECRET_ACCESS_KEY=''
 	    
     }
 
