@@ -134,6 +134,7 @@ pipeline {
             steps {
 		    sh " export AWS_ACCESS_KEY_ID='AKIA5YGNIRCYUDV6UHBT'"
 		    sh "export AWS_SECRET_ACCESS_KEY='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'"
+		    sh "kubectl get all"
                     sh "helm upgrade --install --force vproifle-stack helm/vprofilecharts --set appimage=${registry}:${BUILD_NUMBER} --namespace prod"
             }
         }
