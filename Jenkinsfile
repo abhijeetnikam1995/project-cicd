@@ -128,6 +128,16 @@ pipeline {
         }
 	    
 	    
+	      stage('Kubernetes Deploy') {
+	  
+            steps {
+                    sh "helm upgrade --install --force vproifle-stack helm/vprofilecharts --set appimage=${registry}:${BUILD_NUMBER} --namespace prod"
+            }
+        }
+	    
+	    
+	    
+	    
 	    
 	    
     }
