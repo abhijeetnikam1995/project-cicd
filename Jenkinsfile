@@ -5,6 +5,7 @@ pipeline {
         jdk "OracleJDK8"
 
 	    //added comment for test
+	    //second change
     }
     	
     environment {
