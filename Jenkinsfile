@@ -1,3 +1,7 @@
+def COLOR_MAP = [
+    'SUCCESS': 'good', 
+    'FAILURE': 'danger',
+]
 pipeline {
     agent any
     tools {
@@ -8,20 +12,20 @@ pipeline {
     environment {
         SNAP_REPO = 'vprofile-snapshot'
 		NEXUS_USER = 'admin'
-		NEXUS_PASS = 'admin'
+		NEXUS_PASS = 'admin123'
 		RELEASE_REPO = 'vprofile-release'
 		CENTRAL_REPO = 'vpro-maven-central'
-		NEXUSIP = '10.0.101.167'
+		NEXUSIP = '172.31.5.4'
 		NEXUSPORT = '8081'
 		NEXUS_GRP_REPO = 'vpro-maven-group'
         NEXUS_LOGIN = 'nexuslogin'
         SONARSERVER = 'sonarserver'
         SONARSCANNER = 'sonarscanner'
-	     registry = "abhijeetnikam1995/vproappdock"
-        registryCredential = 'dockerhub'
-	    	    AWS_ACCESS_KEY_ID=''
-		    AWS_SECRET_ACCESS_KEY=''
-	    
+        registryCredential = 'ecr:us-west-1:awscreds'
+        appRegistry = '951401132355.dkr.ecr.us-west-1.amazonaws.com/vprofileappimg'
+        vprofileRegistry = "https://951401132355.dkr.ecr.us-west-1.amazonaws.com"
+        cluster = "vprostaging"
+        service = "vproappprodsvc"
     }
 
     stages {
@@ -49,7 +53,7 @@ pipeline {
                 sh 'mvn -s settings.xml checkstyle:checkstyle'
             }
         }
-/*
+
         stage('Sonar Analysis') {
             environment {
                 scannerHome = tool "${SONARSCANNER}"
@@ -67,9 +71,8 @@ pipeline {
               }
             }
         }
-	  
-	    
-	     stage("Quality Gate") {
+
+        stage("Quality Gate") {
             steps {
                 timeout(time: 1, unit: 'HOURS') {
                     // Parameter indicates whether to set pipeline to UNSTABLE if Quality Gate fails
@@ -78,7 +81,7 @@ pipeline {
                 }
             }
         }
-*/
+
         stage("UploadArtifact"){
             steps{
                 nexusArtifactUploader(
@@ -98,53 +101,40 @@ pipeline {
                 )
             }
         }
-	    
-	     stage('Building image') {
-            steps{
+
+        stage('Build App Image') {
+            steps {
                 script {
-		     sh 'pwd'
-                    dockerImage = docker.build( registry + ":$BUILD_NUMBER", "./vprofile-docker/Docker-files/app/multistage/")
-              }
-             }
+                    dockerImage = docker.build( appRegistry + ":$BUILD_NUMBER", "./Docker-files/app/multistage/")
+                }
             }
-	    
-	    
-	             
-        stage('Deploy Image') {
+        }
+        
+        stage('Upload App Image') {
           steps{
             script {
-              docker.withRegistry( '', registryCredential ) {
+              docker.withRegistry( vprofileRegistry, registryCredential ) {
                 dockerImage.push("$BUILD_NUMBER")
                 dockerImage.push('latest')
               }
             }
           }
         }
-         	    
-	 
-    
-    
-    stage('Remove Unused docker image') {
-          steps{
-            sh "docker rmi $registry:$BUILD_NUMBER"
-		  sh "echo $USER"
-          }
-        }
-	    
-	    
-	      stage('Kubernetes Deploy') {
-	  
+
+        stage('Deploy to ECS staging') {
             steps {
-	
-		    sh "kubectl get all"
-                    sh "helm upgrade --install --force vproifle-stack helm/vprofilecharts --set appimage=${registry}:${BUILD_NUMBER} --namespace prod"
+                withAWS(credentials: 'awscreds', region: 'us-west-1') {
+                    sh 'aws ecs update-service --cluster ${cluster} --service ${service} --force-new-deployment'
+                } 
             }
         }
-	    
-	    
-	    
-	    
-	    
-	    
+    }
+    post {
+        always {
+            echo 'Slack Notifications.'
+            slackSend channel: '#jenkinscicd',
+                color: COLOR_MAP[currentBuild.currentResult],
+                message: "*${currentBuild.currentResult}:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} \n More info at: ${env.BUILD_URL}"
+        }
     }
 }
