@@ -29,14 +29,11 @@ pipeline {
     }
 
     stages {
-        stage('Build'){
+        stage('Build App Image') {
             steps {
-                sh 'mvn -s settings.xml -DskipTests install'
-            }
-            post {
-                success {
-                    echo "Now Archiving."
-                    archiveArtifacts artifacts: '**/*.war'
+                script {
+			sh 'pwd'
+                    dockerImage = docker.build( appRegistry + ":$BUILD_NUMBER", "./")
                 }
             }
         }
